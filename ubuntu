@@ -134,7 +134,6 @@ brew_install_or_upgrade 'ruby-build'
 
 # shellcheck disable=SC2016
 append_to_zshrc '# rbenv settings'
-append_to_zshrc 'export RBENV_ROOT=/home/joe/.linuxbrew/var/rbenv' 1
 append_to_zshrc 'if which rbenv > /dev/null; then eval "$(rbenv init - --no-rehash zsh)"; fi' 1
 
 brew_install_or_upgrade 'openssl'
