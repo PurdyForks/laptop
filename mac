@@ -58,11 +58,26 @@ else
   sudo chown -R "$LOGNAME:admin" "$HOMEBREW_PREFIX"
 fi
 
+update_shell() {
+  local shell_path;
+  shell_path="$(which zsh)"
+
+  fancy_echo "Changing your shell to zsh ..."
+  if ! grep "$shell_path" /etc/shells > /dev/null 2>&1 ; then
+    fancy_echo "Adding '$shell_path' to /etc/shells"
+    sudo sh -c "echo $shell_path >> /etc/shells"
+  fi
+  chsh -s "$shell_path"
+}
+
 case "$SHELL" in
-  */zsh) : ;;
+  */zsh)
+    if [ "$(which zsh)" != '/bin/zsh' ] ; then
+      update_shell
+    fi
+    ;;
   *)
-    fancy_echo "Changing your shell to zsh ..."
-      chsh -s "$(which zsh)"
+    update_shell
     ;;
 esac
 
@@ -88,10 +103,6 @@ brew_is_upgradable() {
   name="$(brew_expand_alias "$1")"
 
   ! brew outdated --quiet "$name" >/dev/null
-}
-
-brew_tap() {
-  brew tap "$1" --repair 2> /dev/null
 }
 
 brew_expand_alias() {
@@ -141,14 +152,14 @@ if brew list | grep -Fq brew-cask; then
 fi
 
 fancy_echo "Updating Homebrew formulae ..."
-brew_tap 'thoughtbot/formulae'
-
+brew tap thoughtbot/formulae
 brew update
 
 fancy_echo "Updating Unix tools ..."
 brew_install_or_upgrade 'ctags'
 brew_install_or_upgrade 'git'
 brew_install_or_upgrade 'openssl'
+brew unlink openssl && brew link openssl --force
 brew_install_or_upgrade 'rcm'
 brew_install_or_upgrade 'reattach-to-user-namespace'
 brew_install_or_upgrade 'the_silver_searcher'
@@ -171,7 +182,6 @@ brew_install_or_upgrade 'qt'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'libyaml' # should come after openssl
-brew_install_or_upgrade 'node'
 brew_install_or_upgrade 'rbenv'
 brew_install_or_upgrade 'ruby-build'
 
@@ -192,7 +202,7 @@ append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
 eval "$(rbenv init -)"
 
 if ! rbenv versions | grep -Fq "$ruby_version"; then
-  RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/opt/openssl rbenv install -s "$ruby_version"
+  rbenv install -s "$ruby_version"
 fi
 
 rbenv global "$ruby_version"
@@ -207,3 +217,6 @@ if [ -f "$HOME/.laptop.local" ]; then
   # shellcheck disable=SC1090
   . "$HOME/.laptop.local"
 fi
+
+fancy_echo "Cleaning up old Homebrew formulae ..."
+brew cleanup
