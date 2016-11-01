@@ -155,30 +155,19 @@ fancy_echo "Updating Homebrew formulae ..."
 brew tap thoughtbot/formulae
 brew update
 
-fancy_echo "Updating Unix tools ..."
+fancy_echo "Updating Core tools ..."
 brew_install_or_upgrade 'ctags'
 brew_install_or_upgrade 'git'
 brew_install_or_upgrade 'openssl'
 brew unlink openssl && brew link openssl --force
 brew_install_or_upgrade 'rcm'
-brew_install_or_upgrade 'reattach-to-user-namespace'
 brew_install_or_upgrade 'the_silver_searcher'
 brew_install_or_upgrade 'tmux'
 brew_install_or_upgrade 'vim'
 brew_install_or_upgrade 'zsh'
 
-fancy_echo "Updating Heroku tools ..."
-brew_install_or_upgrade 'heroku-toolbelt'
-brew_install_or_upgrade 'parity'
-
 fancy_echo "Updating GitHub tools ..."
 brew_install_or_upgrade 'hub'
-
-fancy_echo "Updating image tools ..."
-brew_install_or_upgrade 'imagemagick'
-
-fancy_echo "Updating testing tools ..."
-brew_install_or_upgrade 'qt'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'libyaml' # should come after openssl
